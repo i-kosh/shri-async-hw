@@ -21,7 +21,7 @@
         utils.createRandomPromise.lastId = 0;
       const id = utils.createRandomPromise.lastId++;
 
-      // Коллбек для вывода информации в консоль
+      // Коллбэк для вывода информации в консоль
       if (infoCb) {
         infoCb({
           id,
@@ -72,12 +72,12 @@
   // ------------------Основное задание------------------
 
   tests.testMapWithCb = () => {
-    console.info(`Пример вызова функции 'map' c коллбеком:`);
+    console.info(`Пример вызова функции 'map' c коллбэком:`);
 
     const array = new AsyncArray([1, 2, 3, 4, 5]);
 
     const func = (val, index, arr) => {
-      console.log(`i: ${index}`);
+      console.log(`current index: ${index}`);
       return val * 10;
     };
 
@@ -95,12 +95,12 @@
   };
 
   tests.testMapWithOutCb = async () => {
-    console.info(`Пример вызова функции 'map' БЕЗ коллбека:`);
+    console.info(`Пример вызова функции 'map' БЕЗ коллбэка:`);
 
     const array = new AsyncArray([1, 2, 3, 4, 5]);
 
     const func = (val, index, arr) => {
-      console.log(`i: ${index}`);
+      console.log(`current index: ${index}`);
       return val * 10;
     };
 
