@@ -1,6 +1,8 @@
 "use strict";
 
 (function () {
+  // ------------------Основное задание------------------
+
   const {
     AsyncArray,
     add,
@@ -104,5 +106,106 @@
     lessOrEqualAsync,
     sqrtAsync,
     map,
+  };
+
+  // --------------------Доп. задание--------------------
+
+  const getIterator = (iterable) => {
+    try {
+      return iterable[Symbol.iterator]();
+    } catch (error) {
+      throw new TypeError(
+        `${iterable} is not iterable (cannot read property Symbol(Symbol.iterator))`
+      );
+    }
+  };
+
+  Promise._any = (iterable) => {
+    return new Promise((resolve, reject) => {
+      const iterator = getIterator(iterable);
+      const errorArr = [];
+
+      let promisesCount = 0;
+      let next = iterator.next();
+      let isAnyFulfilled = false;
+
+      const onfulfilled = (val) => {
+        isAnyFulfilled = true;
+        resolve(val);
+      };
+
+      const onrejected = (reason) => {
+        if (isAnyFulfilled) return;
+        errorArr.push(reason);
+
+        if (errorArr.length >= promisesCount) {
+          reject(new AggregateError(errorArr, "All promises were rejected"));
+        }
+      };
+
+      while (!next.done) {
+        if (isAnyFulfilled) break;
+
+        if (next.value instanceof Promise) {
+          next.value.then(onfulfilled).catch(onrejected);
+          promisesCount++;
+        } else {
+          onfulfilled(next.value);
+        }
+
+        next = iterator.next();
+      }
+    });
+  };
+
+  Promise._allSettled = (iterable) => {
+    return new Promise((resolve) => {
+      const iterator = getIterator(iterable);
+      const results = [];
+
+      let next = iterator.next();
+      let itemsCount = 0;
+
+      const resolveIf = () => {
+        if (itemsCount === results.length) {
+          resolve(results);
+        }
+      };
+
+      const onfulfilled = (val) => {
+        results.push({
+          status: "fulfilled",
+          value: val,
+        });
+
+        resolveIf();
+      };
+
+      const onrejected = (reason) => {
+        results.push({
+          status: "rejected",
+          reason,
+        });
+
+        resolveIf();
+      };
+
+      while (!next.done) {
+        if (next.value instanceof Promise) {
+          next.value.then(onfulfilled).catch(onrejected);
+        } else {
+          onfulfilled(next.value);
+        }
+
+        itemsCount++;
+
+        next = iterator.next();
+      }
+    });
+  };
+
+  Promise.prototype._finally = function (onFinally) {
+    this.then(onFinally, onFinally);
+    return this;
   };
 })();
