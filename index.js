@@ -37,7 +37,10 @@
    */
   class AsyncArrayPromiseWrap {
     constructor(arr) {
-      if (!(arr instanceof AsyncArray)) throw new TypeError("Invalid argument");
+      if (!(arr instanceof AsyncArray))
+        throw new TypeError(
+          "Invalid argument: first argument must be instance of AsyncArray"
+        );
 
       this.arr = arr;
 
