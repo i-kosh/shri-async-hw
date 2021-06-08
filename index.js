@@ -108,6 +108,8 @@
     map,
   };
 
+  console.info("❕ Функция 'map' доступна в 'globalThis.HW'");
+
   // --------------------Доп. задание--------------------
 
   const getIterator = (iterable) => {

@@ -3,26 +3,11 @@
 (async function () {
   const { AsyncArray } = Homework;
   const { map } = HW;
+  const tests = {};
 
-  // ------------------Утилиты------------------
+  // ----------------------Утилиты----------------------
 
   const utils = {
-    setUp: () => {
-      const array = new AsyncArray([1, 2, 3, 4, 5]);
-
-      const func = (val, index, arr) => {
-        console.log(`i: ${index}`);
-        return val * 10;
-      };
-
-      const callback = (arr) => {
-        arr.print();
-        console.log("CALLBACK DONE");
-      };
-
-      return [array, func, callback];
-    },
-
     random: (max = 100, min = 1) => {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
@@ -86,64 +71,107 @@
 
   // ------------------Основное задание------------------
 
-  const withCb = () => {
+  tests.testMapWithCb = () => {
     console.info(`Пример вызова функции 'map' c коллбеком:`);
 
-    const args = utils.setUp();
-    args[0].print();
-    map(...args);
+    const array = new AsyncArray([1, 2, 3, 4, 5]);
+
+    const func = (val, index, arr) => {
+      console.log(`i: ${index}`);
+      return val * 10;
+    };
+
+    const callback = (arr) => {
+      console.log("Новый массив:");
+      arr.print();
+
+      console.log("CALLBACK DONE");
+    };
+
+    console.log("Изначальный массив:");
+    array.print();
+
+    map(array, func, callback);
   };
 
-  const withOutCb = async () => {
-    console.info(`Пример вызова функции 'map' без передачи коллбека:`);
+  tests.testMapWithOutCb = async () => {
+    console.info(`Пример вызова функции 'map' БЕЗ коллбека:`);
 
-    const args = utils.setUp();
-    args[0].print();
-    const asyncResult = await map(...args.slice(0, 2));
+    const array = new AsyncArray([1, 2, 3, 4, 5]);
+
+    const func = (val, index, arr) => {
+      console.log(`i: ${index}`);
+      return val * 10;
+    };
+
+    console.log("Изначальный массив:");
+    array.print();
+
+    const asyncResult = await map(array, func);
+
+    console.log("Новый массив:");
     asyncResult.print();
   };
 
-  // await withOutCb();
-  // withCb();
-
   // --------------------Доп. задание--------------------
 
-  const promiseAnyTest = async () => {
+  tests.promiseAnyTest = async () => {
     const testVal = utils.createRandomPromises(3, 1000, 2);
 
-    console.log("native:", await Promise.any(testVal));
-    console.log("custom:", await Promise._any(testVal));
+    console.log("💙 Promise.any:", await Promise.any(testVal));
+    console.log("💚 Promise._any:", await Promise._any(testVal));
   };
 
-  const promiseAllSettledTest = async () => {
-    const testVal = utils.createRandomPromises(3, 1000, 2).concat([1, 2, 3]);
+  tests.promiseAllSettledTest = async () => {
+    const testVal = utils.createRandomPromises(3, 1000, 2);
 
-    console.log("native:", await Promise.allSettled(testVal));
-    console.log("custom:", await Promise._allSettled(testVal));
+    console.log("💙 Promise.allSettled:", await Promise.allSettled(testVal));
+    console.log("💚 Promise._allSettled:", await Promise._allSettled(testVal));
   };
 
-  const primiseFinallyTest = async () => {
+  tests.promiseFinallyTest = async () => {
     const timeout = 500;
-    const promise = utils.createRandomPromise(timeout);
 
-    console.log(`Timeout: ${timeout}ms`);
+    // Resolve
 
-    console.time("test");
-    console.log(
-      await promise.finally(() => {
-        console.log("native finally");
+    const promiseNative = utils.createRandomPromise(timeout);
+    const promiseNativeResult = await promiseNative.finally(() => {
+      console.log("✔ Native finally on resolve");
+    });
+    console.log(`value: ${promiseNativeResult}`);
+
+    const promiseCustom = utils.createRandomPromise(timeout);
+    const promiseCustomResult = await promiseCustom._finally(() => {
+      console.log("✔ Custom finally on resolve");
+    });
+    console.log(`value: ${promiseCustomResult}`);
+
+    // Reject
+
+    const promiseNativeReject = utils.createRandomPromise(timeout, true);
+    const promiseNativeRejectResult = await promiseNativeReject
+      .finally(() => {
+        console.log("💥 Native finally on reject");
       })
-    );
+      .catch(() => {
+        // noop
+      });
+    console.log(`value: ${promiseNativeRejectResult}`);
 
-    console.log(
-      await promise._finally(() => {
-        console.log("custom finally");
+    const promiseCustomReject = utils.createRandomPromise(timeout, true);
+    const promiseCustomRejectResult = await promiseCustomReject
+      ._finally(() => {
+        console.log("💥 Custom finally on reject");
       })
-    );
-    console.timeEnd("test");
+      .catch(() => {
+        // noop
+      });
+    console.log(`value: ${promiseCustomRejectResult}`);
   };
 
-  // promiseAnyTest();
-  // promiseAllSettledTest();
-  // primiseFinallyTest();
+  window.HW.tests = tests;
+  window.HW.utils = utils;
+
+  console.info(`❕ Функции для быстрой демострации выполненного задания находятся в 'globalThis.HW.tests'
+  Доп. утилиты для генерации промисов находятся в 'globalThis.HW.utils'`);
 })();
