@@ -1,5 +1,6 @@
 /**
- * Примеры работы функции `map`
+ * Примеры работы функции `map`, для быстрой проверки достаточно раскомментировать
+ * вызовы тестов в конце файла
  */
 
 "use strict";
@@ -25,21 +26,22 @@
   };
 
   const withCb = () => {
+    console.info(`Пример вызова функции 'map' c коллбеком:`);
+
     const args = setUp();
     args[0].print();
     map(...args);
   };
 
   const withOutCb = async () => {
+    console.info(`Пример вызова функции 'map' без передачи коллбека:`);
+
     const args = setUp();
     args[0].print();
     const asyncResult = await map(...args.slice(0, 2));
     asyncResult.print();
   };
 
-  console.info(`Пример вызова функции 'map' без передачи коллбека:`);
-  await withOutCb();
-
-  console.info(`Пример вызова функции 'map' c коллбеком:`);
-  withCb();
+  // await withOutCb();
+  // withCb();
 })();
