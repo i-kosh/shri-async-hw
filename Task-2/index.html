@@ -90,14 +90,6 @@
       <div id="cancel-prev-request-container"></div>
       <button type="button" id="button">Очистить</button>
     </div>
-    <script>
-      const getRandomInt = (min, max) =>
-        Math.floor(Math.random() * (max - min + 1)) + min;
-
-      const getApiResponse = (searchString) =>
-        new Promise((resolve) =>
-          setTimeout(() => resolve(searchString), getRandomInt(1, 10) * 500)
-        );
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>

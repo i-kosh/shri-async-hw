@@ -1,0 +1,23 @@
+{
+  "name": "shri-async-hw",
+  "version": "1.0.0",
+  "description": "[GitHub Pages](https://i-kosh.github.io/shri-async-hw)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i-kosh/shri-async-hw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/i-kosh/shri-async-hw/issues"
+  },
+  "homepage": "https://github.com/i-kosh/shri-async-hw#readme",
+  "devDependencies": {
+    "rxjs": "^7.1.0"
+  }
+}
