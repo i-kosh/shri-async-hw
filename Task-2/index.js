@@ -15,17 +15,21 @@
   /** @type {import("../node_modules/rxjs")} */
   const { fromEvent, from } = rxjs;
   /** @type {import("../node_modules/rxjs/dist/types/operators")} */
-  const { filter } = rxjs.operators;
+  const { switchMap } = rxjs.operators;
 
-  // -----------Задание 1--------------
+  // -----------Подготовка-------------
 
   const clearButton = document.querySelector("#button");
   const responseContainer = document.querySelector("#response-container");
   const cancelPrevRequestContainer = document.querySelector(
     "#cancel-prev-request-container"
   );
+  const input = document.querySelector("#input");
 
+  const inputObservable$ = fromEvent(input, "input");
   const clearButtonClickObservable$ = fromEvent(clearButton, "click");
+
+  // -----------Задание 1--------------
 
   clearButtonClickObservable$.subscribe(() => {
     responseContainer.textContent = "";
@@ -34,34 +38,12 @@
 
   // -----------Задание 2--------------
 
-  const input = document.querySelector("#input");
-
-  const inputObservable$ = fromEvent(input, "input");
-
   const resolveCancelRequest = () => {
-    let lastStartTimestamp = 0;
-
-    inputObservable$.subscribe((evt) => {
-      const inputValue = evt.target.value;
-      const requestObservable$ = from(getApiResponse(inputValue));
-
-      const startTimestamp = Date.now();
-      lastStartTimestamp = startTimestamp;
-
-      requestObservable$
-        .pipe(
-          filter(() => {
-            return (
-              lastStartTimestamp > 0 &&
-              Date.now() > lastStartTimestamp &&
-              startTimestamp >= lastStartTimestamp
-            );
-          })
-        )
+    inputObservable$
+      .pipe(switchMap((evt) => from(getApiResponse(evt.target.value))))
         .subscribe((resolved) => {
           cancelPrevRequestContainer.textContent = resolved;
         });
-    });
   };
 
   resolveCancelRequest();
