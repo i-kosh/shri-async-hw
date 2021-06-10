@@ -15,7 +15,7 @@
   /** @type {import("../node_modules/rxjs")} */
   const { fromEvent, from } = rxjs;
   /** @type {import("../node_modules/rxjs/dist/types/operators")} */
-  const { switchMap } = rxjs.operators;
+  const { switchMap, mergeMap, scan } = rxjs.operators;
 
   // -----------Подготовка-------------
 
@@ -41,10 +41,25 @@
   const resolveCancelRequest = () => {
     inputObservable$
       .pipe(switchMap((evt) => from(getApiResponse(evt.target.value))))
-        .subscribe((resolved) => {
-          cancelPrevRequestContainer.textContent = resolved;
-        });
+      .subscribe((resolved) => {
+        cancelPrevRequestContainer.textContent = resolved;
+      });
   };
 
   resolveCancelRequest();
+
+  // -----------Задание 3--------------
+
+  const resolveRaceCondition = () => {
+    inputObservable$
+      .pipe(
+        mergeMap((evt) => from(getApiResponse(evt.target.value))),
+        scan((acc, val) => (acc.length < val.length ? val : acc))
+      )
+      .subscribe((resolved) => {
+        responseContainer.textContent = resolved;
+      });
+  };
+
+  resolveRaceCondition();
 })();
